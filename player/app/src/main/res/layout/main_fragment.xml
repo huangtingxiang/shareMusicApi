@@ -12,6 +12,8 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -27,8 +29,9 @@
                 android:id="@+id/add_play_list"
                 android:layout_alignParentRight="true"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="50dp"
+                android:layout_width="40dp"
                 android:layout_height="50dp"
+                app:backgroundTint="@color/colorAccent"
                 app:icon="@drawable/ic_add_circle_outline_black_24dp" />
         </RelativeLayout>
 

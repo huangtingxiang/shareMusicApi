@@ -23,10 +23,12 @@
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleMarginBottom="20dp"
                 app:expandedTitleMarginStart="15dp"
+                app:expandedTitleTextAppearance="@style/CollapsedAppBar"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
                 <ImageView
                     android:id="@+id/songs_image"
+                    android:alpha="0.8"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:fitsSystemWindows="true"

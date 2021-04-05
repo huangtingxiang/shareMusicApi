@@ -24,6 +24,7 @@
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleMarginBottom="20dp"
                 app:expandedTitleMarginStart="15dp"
+                app:expandedTitleTextAppearance="@style/CollapsedAppBar"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
                 <ImageView
@@ -63,7 +64,8 @@
             android:layout_margin="16dp"
             android:tooltipText="@string/new_message"
             app:backgroundTint="@color/float_btn"
-            app:srcCompat="@drawable/ic_add_circle_outline_black_24dp" />
+            app:tint="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_add_circle_outline_white_24dp" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <include

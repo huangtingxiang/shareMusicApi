@@ -74,7 +74,7 @@ public class MainFragment extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                builder.show();
+               builder.show();
             }
         });
         // 设置我的歌单

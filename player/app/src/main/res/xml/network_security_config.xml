@@ -4,5 +4,6 @@
         <domain includeSubdomains="true">192.168.200.24</domain>
         <domain includeSubdomains="true">tyst.migu.cn</domain>
         <domain includeSubdomains="true">music.126.net</domain>
+        <domain includeSubdomains="true">47.93.210.229</domain>
     </domain-config>
 </network-security-config>

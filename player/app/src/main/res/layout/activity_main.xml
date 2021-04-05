@@ -24,7 +24,8 @@
                 app:contentScrim="?attr/colorPrimary"
                 app:expandedTitleMarginBottom="20dp"
                 app:expandedTitleMarginStart="15dp"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                app:titleEnabled="false">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -32,15 +33,15 @@
                     android:contentDescription="@string/app_title"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/album_cover_daft_punk"
+                    android:src="@drawable/background"
                     app:layout_collapseMode="parallax"
                     app:layout_collapseParallaxMultiplier="0.5" />
 
                 <androidx.appcompat.widget.Toolbar
-                    android:titleTextColor="@android:color/white"
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?actionBarSize"
+                    android:titleTextColor="@android:color/white"
                     app:contentInsetStart="0dp"
                     app:contentInsetStartWithNavigation="0dp"
                     app:layout_collapseMode="pin" />
@@ -50,10 +51,10 @@
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
-                app:layout_collapseMode="pin"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom" />
-
+                android:layout_gravity="bottom"
+                app:tabSelectedTextColor="@color/colorPrimaryDark"
+                app:layout_collapseMode="pin" />
 
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -74,10 +75,10 @@
 
             <include
                 android:id="@+id/footer_container"
-                android:layout_alignParentBottom="true"
+                layout="@layout/footer_player"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                layout="@layout/footer_player"/>
+                android:layout_alignParentBottom="true" />
 
         </RelativeLayout>
 

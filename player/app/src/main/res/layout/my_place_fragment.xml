@@ -21,6 +21,7 @@
         android:layout_margin="16dp"
         android:tooltipText="@string/my_place"
         app:backgroundTint="@color/float_btn"
-        app:srcCompat="@drawable/ic_home_black_24dp" />
+        app:tint="@color/colorPrimary"
+        app:srcCompat="@drawable/ic_home_white_24dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

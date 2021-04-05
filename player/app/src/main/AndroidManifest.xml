@@ -25,7 +25,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
         </activity>
-        <activity android:name=".musicPlayer.activities.SongsActivity" />
+        <activity android:name=".musicPlayer.activities.SongsActivity">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
 
         <service
             android:name=".musicPlayer.music.PlayerService"

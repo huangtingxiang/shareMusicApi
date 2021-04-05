@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:focusableInTouchMode="true"
     tools:context=".MainActivity">
 
@@ -147,7 +148,7 @@
                 android:fontFamily="@font/calibri"
                 android:text="@string/login"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                app:backgroundTint="@color/colorAccent"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 
@@ -159,8 +160,8 @@
                 android:background="@drawable/buttonshapewhitebg"
                 android:fontFamily="@font/calibri"
                 android:text="@string/register"
+                app:backgroundTint="@color/colorAccent"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
                 android:textSize="16dp"
                 android:textStyle="bold" />
 

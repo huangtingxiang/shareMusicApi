@@ -118,6 +118,7 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
      * @param messages
      */
     public void setMessage(Message[] messages) {
+        this.messages = new ArrayList<>();
         for (Message message : messages) {
             this.messages.add(message);
         }

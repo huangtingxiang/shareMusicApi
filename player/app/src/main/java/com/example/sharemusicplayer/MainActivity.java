@@ -54,6 +54,7 @@ public class MainActivity extends PlayerActivity implements NavigationView.OnNav
         // 设置顶部导航栏
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.app_title);
 
         // 设置侧边栏
         drawerLayout = findViewById(R.id.drawer_layout);
