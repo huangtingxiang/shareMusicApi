@@ -99,6 +99,8 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.PlayLi
         if (playList.getPic_url() != null && !playList.getPic_url().equals("")) {
             new DownloadImageTask(holder.playListImage)
                     .execute(playList.getPic_url());
+        } else {
+            holder.playListImage.setImageResource(R.drawable.album_cover_daft_punk);
         }
     }
 
