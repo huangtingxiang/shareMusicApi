@@ -31,7 +31,7 @@ public class BaseHttpService {
 
     public static BaseHttpService baseHttpService;
 
-    public static String BASE_URL = "http://192.168.200.24:9000/";
+    public static String BASE_URL = "http://192.168.2.123:9000/";
 
     public static BaseHttpService getInstance() {
         if (baseHttpService == null) {
@@ -156,6 +156,7 @@ public class BaseHttpService {
         @Override
         protected HttpTask.CustomerResponse doInBackground(Request... requests) {
             try {
+
                 OkHttpClient okHttpClient = new OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS).build();
                 Response response = okHttpClient.newCall(requests[0]).execute();
                 // 在这里将返回流转化为需要的范型数据并返回
