@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">聚耳朵</string>
+    <string name="edit_message">Enter a message</string>
+
+    <string name="open_drawer">打开侧边栏</string>
+    <string name="close_drawer">关闭侧边栏</string>
+
+    <string name="app_title">聚耳朵</string>
+
+    <string name="music_title">我的音乐</string>
+    <string name="discover_title">发现</string>
+    <string name="my_area_title">我的圈子</string>
+
+    <string name="personal">个人中心</string>
+    <string name="my_message">我的消息</string>
+    <string name="my_friend">我的好友</string>
+
+    <string name="system">系统设置</string>
+    <string name="system_help">帮助</string>
+    <string name="system_about">关于</string>
+
+    <string name="rank_list">排行榜</string>
+    <string name="top_list_1">热歌榜</string>
+    <string name="top_list_2">新歌榜</string>
+    <string name="top_list_3">飙升榜</string>
+
+    <string name="recommend_songs">推荐歌曲</string>
+    <string name="recommend_play_list">推荐歌单</string>
+    <string name="my_play_list">我的歌单</string>
+
+    <string name="login_welcome">欢迎</string>
+    <string name="login">登陆</string>
+    <string name="login_des">各大平台音乐尽在此处,开始你的音乐之旅</string>
+    <string name="login_username">用户名</string>
+    <string name="login_password">密码</string>
+    <string name="register">注册</string>
+
+    <string name="nick_name">昵称</string>
+    <string name="logout">退出登陆</string>
+
+    <string name="init_place">初始化圈子</string>
+    <string name="my_place">我的圈子</string>
+    <string name="new_message">发布新消息</string>
+    <string name="choose_user">选择圈子用户</string>
+    <string name="place_name">圈子名称</string>
+    <string name="place_image">封面预览(点击修改)</string>
+    <string name="place_desName">描述</string>
+    <string name="place_label">标签</string>
+
+    <string name="play_list_name">歌单名称</string>
+    <string name="play_list_des">歌单描述</string>
+
+    <string name="play_vector_path" translatable="false">M6,5 l12,7 l0,0 l-12,0z M6,12 l12,0 l0,0 l-12,7z</string>
+    <string name="pause_vector_path" translatable="false">M5,6 l14,0 l0,4 l-14,0z M5,14 l14,0 l0,4 l-14,0z</string>
+    <string name="transition_name_cover" translatable="false">cover</string>
+    <string name="transition_name_title" translatable="false">title</string>
+    <string name="transition_name_time" translatable="false">time</string>
+    <string name="transition_name_duration" translatable="false">duration</string>
+    <string name="transition_name_progress" translatable="false">progress</string>
+    <string name="transition_name_fab" translatable="false">fab</string>
+</resources>

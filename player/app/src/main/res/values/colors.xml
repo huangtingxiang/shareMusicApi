@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#fff</color>
+    <color name="colorPrimaryDark">#232F34</color>
+    <color name="colorAccent">#E30425</color>
+
+    <color name="textInputLayout">#96ffffff</color>
+    <color name="white">#ffffff</color>
+    <color name="light">#FFEEEEEE</color>
+
+    <color name="dark">#222222</color>
+
+    <color name="float_btn">@color/colorAccent </color>
+</resources>

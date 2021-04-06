@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/layout_bottom_border"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/person_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/hugh"
+            app:civ_border_color="@color/light"
+            app:civ_border_width="2dp" />
+
+
+        <TextView
+            android:id="@+id/nick_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/person_image"
+            android:maxLines="1"
+            android:paddingTop="4dp"
+            android:paddingEnd="16dp"
+            android:text="xxxxx"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="@color/mtrl_list_item_tint" />
+
+        <TextView
+            android:id="@+id/create_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/nick_name"
+            android:layout_gravity="center_vertical"
+            android:layout_toEndOf="@id/person_image"
+            android:maxLines="2"
+            android:paddingEnd="16dp"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="@color/mtrl_list_item_tint" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/content_tex"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/person_image"
+        android:maxLines="1"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:text="这首歌真是好听"
+        android:textAppearance="?attr/textAppearanceSubtitle1"
+        android:textColor="@color/mtrl_list_item_tint" />
+
+
+    <RelativeLayout
+        android:id="@+id/song_container"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="?attr/selectableItemBackground"
+        android:minHeight="64dp">
+
+        <ImageView
+            android:id="@+id/pic_url"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:padding="16dp" />
+
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/pic_url"
+            android:maxLines="1"
+            android:paddingTop="16dp"
+            android:paddingEnd="16dp"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="@color/mtrl_list_item_tint" />
+
+        <TextView
+            android:id="@+id/album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/artist"
+            android:layout_gravity="center_vertical"
+            android:layout_toEndOf="@id/pic_url"
+            android:maxLines="2"
+            android:paddingEnd="16dp"
+            android:textAppearance="?attr/textAppearanceBody2"
+            android:textColor="@color/mtrl_list_item_tint" />
+
+    </RelativeLayout>
+</LinearLayout>

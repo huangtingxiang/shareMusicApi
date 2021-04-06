@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/personal">
+        <menu>
+            <item android:title="@string/my_friend"></item>
+            <item android:title="@string/my_message"></item>
+        </menu>
+    </item>
+    <item android:title="@string/system">
+        <menu>
+            <item android:title="@string/system_help"></item>
+            <item android:title="@string/system_about"></item>
+        </menu>
+    </item>
+</menu>
