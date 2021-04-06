@@ -19,6 +19,7 @@ services:
     image: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./shareMusicApi/resources:/tmp/resources
     network_mode: "host"
 volumes:
   db-data:
