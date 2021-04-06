@@ -13,6 +13,7 @@
 * 进入lib/NeteaseCloudMusicApi目录下，使用npm install。
 * 进入spider目录，使用python3 -m pip install aiohttp(python版本3.7以上)。
 * 进入shareMucisApi使用mvn install。
-* 命令行下运行./start.sh。(建议运行前先用docker-compose构建，否则第一次运行可能会失败)。
+* docker-compose构建,构建完毕后创建数据库shareMusic,创建完毕后停止docker-compose。
+* 命令行下运行./start.sh。
 * 修改安卓网络配置,res/xm/netword_secutiry_config.xml 加入当前电脑ip,BaseHttpService修改BASE_URL为当前电脑ip。
 * 数据库使用mysql 3306端口，初始化用户root,密码123456。
