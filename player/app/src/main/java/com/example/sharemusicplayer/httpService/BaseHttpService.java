@@ -33,6 +33,7 @@ public class BaseHttpService {
 
     public static String BASE_URL = "http://192.168.2.183:9000/";
 
+
     public static BaseHttpService getInstance() {
         if (baseHttpService == null) {
             baseHttpService = new BaseHttpService();
