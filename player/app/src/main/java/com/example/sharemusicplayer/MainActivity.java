@@ -21,6 +21,7 @@ import com.example.sharemusicplayer.entity.User;
 import com.example.sharemusicplayer.httpService.BaseHttpService;
 import com.example.sharemusicplayer.httpService.DownloadImageTask;
 import com.example.sharemusicplayer.httpService.UserService;
+import com.example.sharemusicplayer.localPlayer.fragment.LocalPlayerFragment;
 import com.example.sharemusicplayer.musicPlayer.activities.PlayerActivity;
 import com.example.sharemusicplayer.musicPlayer.activities.SearchActivity;
 import com.example.sharemusicplayer.musicPlayer.fragment.MainFragment;
@@ -43,7 +44,7 @@ public class MainActivity extends PlayerActivity implements NavigationView.OnNav
     private TextView nickName;
     private View headerLayout;
     private CircleImageView userImage;
-    Fragment[] tabFragment = {new MainFragment(), new RecommendFragment(), new MyPlaceFragment()};
+    Fragment[] tabFragment = {new MainFragment(), new RecommendFragment(), new LocalPlayerFragment()};
     String[] tabTitle;
     UserService userService = UserService.getInstance();
 
@@ -66,7 +67,7 @@ public class MainActivity extends PlayerActivity implements NavigationView.OnNav
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        String[] temp = {getResources().getString(R.string.music_title), getResources().getString(R.string.discover_title), getResources().getString(R.string.my_area_title)};
+        String[] temp = {getResources().getString(R.string.music_title), getResources().getString(R.string.discover_title), getResources().getString(R.string.local_player)};
         this.tabTitle = temp;
         // 设置pageView
         viewPager = findViewById(R.id.page_view);
