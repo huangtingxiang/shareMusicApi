@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -22,7 +23,6 @@ import android.view.ViewGroup;
 import com.example.sharemusicplayer.R;
 import com.example.sharemusicplayer.Utils.MusicUtils;
 import com.example.sharemusicplayer.entity.Song;
-import com.example.sharemusicplayer.httpService.SongService;
 import com.example.sharemusicplayer.localPlayer.view.ActionMenuAdapter;
 import com.example.sharemusicplayer.localPlayer.view.LocalSongsAdapter;
 import com.example.sharemusicplayer.musicPlayer.activities.PlayerActivity;
@@ -34,6 +34,7 @@ import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -47,7 +48,7 @@ public class LocalPlayerFragment extends Fragment {
     private static final int OPEN_DIRECTORY = 1;
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 2;
 
-    SongService songService = SongService.getInstance();
+    Song[] songList = new Song[0];
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,7 +61,7 @@ public class LocalPlayerFragment extends Fragment {
         songsView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         songsView.setLayoutManager(layoutManager);
-        songsAdapter = new LocalSongsAdapter(new Song[0], new LocalSongsAdapter.SongClickListener() {
+        songsAdapter = new LocalSongsAdapter(songList, new LocalSongsAdapter.SongClickListener() {
             @Override
             public void onClick(Song song, int position) {
                 ((PlayerActivity) getActivity()).setPlayList(songsAdapter.getSongList(), position);
@@ -96,14 +97,41 @@ public class LocalPlayerFragment extends Fragment {
         Gson gson = new Gson();
         Song[] songs = gson.fromJson(songListJson, Song[].class);
         if (songs != null) {
-            songsAdapter.setSongs(songs);
+            songList = songs;
+            songsAdapter.setSongs(songList);
         }
 
 
-        // 设置搜索菜单 TODO 监听各个选项的点击
+        // 设置搜索菜单
         myToolbar = rootView.findViewById(R.id.my_toolbar2);
         myToolbar.inflateMenu(R.menu.local_menu);
         setHasOptionsMenu(true);
+
+        // 监听搜索框清空、文字变动的事件
+        final SearchView searchView = (SearchView) myToolbar.getMenu().findItem(R.id.local_songs_search).getActionView();
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                songsAdapter.setSongs(LocalPlayerFragment.this.songList);
+                return false;
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(final String query) {
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Song[] songs = Arrays.stream(LocalPlayerFragment.this.songList).filter(x -> x.getName().contains(newText)).toArray(Song[]::new);
+                songsAdapter.setSongs(songs);
+                return false;
+            }
+        });
+
+        // 监听导入本地音乐和清空播放列表
         myToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -122,10 +150,10 @@ public class LocalPlayerFragment extends Fragment {
                         SharedPreferences.Editor edit = LocalPlayerFragment.this.getActivity().getSharedPreferences(getResources().getString(R.string.local_songs), MODE_PRIVATE).edit();
                         edit.putString(getResources().getString(R.string.local_songs_list), "");
                         edit.apply();
-                        Song[] songsList = new Song[0];
-                        songsAdapter.setSongs(songsList);
+                        songList = new Song[0];
+                        songsAdapter.setSongs(songList);
                         ((PlayerActivity) getActivity()).play();
-                        ((PlayerActivity) getActivity()).setPlayList(songsList, 0);
+                        ((PlayerActivity) getActivity()).setPlayList(songList, 0);
                         break;
                     default:
                         break;
@@ -183,10 +211,10 @@ public class LocalPlayerFragment extends Fragment {
                         songList.add(MusicUtils.getMusicData(path));
                     }
                     songsAdapter.addSongsToFirst(songList.toArray(new Song[songList.size()]));
-
+                    LocalPlayerFragment.this.songList = songsAdapter.getSongList();
                     // 将本地歌单保存到数据库中
                     Gson gson = new Gson();
-                    String songListJson = gson.toJson(songsAdapter.getSongList());  // 将歌单列表化为json字符串
+                    String songListJson = gson.toJson(LocalPlayerFragment.this.songList);  // 将歌单列表化为json字符串
                     SharedPreferences.Editor edit = LocalPlayerFragment.this.getActivity().getSharedPreferences(getResources().getString(R.string.local_songs), MODE_PRIVATE).edit();
                     edit.putString(getResources().getString(R.string.local_songs_list), songListJson);
                     edit.apply();
