@@ -1,36 +1,50 @@
 package com.example.sharemusicplayer.localPlayer.fragment;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.sharemusicplayer.R;
+import com.example.sharemusicplayer.Utils.MusicUtils;
 import com.example.sharemusicplayer.entity.Song;
 import com.example.sharemusicplayer.httpService.BaseHttpService;
 import com.example.sharemusicplayer.httpService.SongService;
 import com.example.sharemusicplayer.localPlayer.view.ActionMenuAdapter;
 import com.example.sharemusicplayer.localPlayer.view.LocalSongsAdapter;
 import com.example.sharemusicplayer.musicPlayer.activities.PlayerActivity;
+import com.google.android.material.snackbar.Snackbar;
+import com.leon.lfilepickerlibrary.LFilePicker;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocalPlayerFragment extends Fragment {
     private RecyclerView songsView; // 歌曲列表滑动条
     private RecyclerView.LayoutManager layoutManager;
     private LocalSongsAdapter songsAdapter; // 本地歌曲adapter
+    private Toolbar myToolbar;  // 操作栏
+
+    private static final int OPEN_DIRECTORY = 1;
+    private static final int WRITE_EXTERNAL_STORAGE_CODE = 2;
 
     SongService songService = SongService.getInstance();
-    Song[] songs = {};
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,10 +57,10 @@ public class LocalPlayerFragment extends Fragment {
         songsView.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(getContext());
         songsView.setLayoutManager(layoutManager);
-        songsAdapter = new LocalSongsAdapter(songs, new LocalSongsAdapter.SongClickListener() {
+        songsAdapter = new LocalSongsAdapter(new Song[0], new LocalSongsAdapter.SongClickListener() {
             @Override
             public void onClick(Song song, int position) {
-                ((PlayerActivity) getActivity()).setPlayList(songs, position);
+                ((PlayerActivity) getActivity()).setPlayList(songsAdapter.getSongList(), position);
                 ((PlayerActivity) getActivity()).replay();
             }
         }, false, new LocalSongsAdapter.ActionClickListener() {
@@ -73,20 +87,92 @@ public class LocalPlayerFragment extends Fragment {
 
         songsView.setAdapter(songsAdapter);
 
-        // TODO 获取本地歌曲并转化为songs格式
+        // TODO 从本地数据库中读取存储的歌曲信息
         songService.recommendSongs(new BaseHttpService.CallBack() {
             @Override
             public void onSuccess(BaseHttpService.HttpTask.CustomerResponse result) {
-                songs = (Song[]) result.getData();
-                songsAdapter.setSongs(songs);
+                songsAdapter.setSongs((Song[]) result.getData());
             }
         });
 
         // 设置搜索菜单 TODO 监听各个选项的点击
-        Toolbar myToolbar = rootView.findViewById(R.id.my_toolbar2);
+        myToolbar = rootView.findViewById(R.id.my_toolbar2);
         myToolbar.inflateMenu(R.menu.local_menu);
         setHasOptionsMenu(true);
+        myToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    // 导入本地音乐选项
+                    case R.id.import_local_music:
+                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                            selectFiles();  // 选择文件
+                        } else {
+                            ActivityCompat.requestPermissions(getActivity(),
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
         return rootView;
     }
 
+    /**
+     * 打开选择框选择音频文件
+     */
+    public void selectFiles() {
+        new LFilePicker()
+                .withSupportFragment(LocalPlayerFragment.this)
+                .withStartPath("/storage/emulated/0/netease/cloudmusic/Music/")
+                .withRequestCode(OPEN_DIRECTORY)
+                .withFileFilter(new String[]{".mp3", ".MP3"})
+                .withMutilyMode(true)
+                .withTitle("选择导入音频文件")
+                .start();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case WRITE_EXTERNAL_STORAGE_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    selectFiles();
+                } else {
+                    Snackbar.make(myToolbar, "请允许读写存储器权限!", Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case LocalPlayerFragment.OPEN_DIRECTORY:
+                if (resultCode == Activity.RESULT_OK) {
+                    // 获取导入文件的列表
+                    // 根据文件路径读取相应歌曲信息 并转化为song实体
+                    // 显示到列表中
+                    List<Song> songList = new ArrayList<>();
+                    for (String path :
+                            data.getStringArrayListExtra("paths")) {
+                        songList.add(MusicUtils.getMusicData(path));
+                    }
+                    songsAdapter.addSongsToFirst(songList.toArray(new Song[songList.size()]));
+
+                    // TODO 将获取到的歌单列表保存到本地中
+                }
+                break;
+        }
+    }
 }
