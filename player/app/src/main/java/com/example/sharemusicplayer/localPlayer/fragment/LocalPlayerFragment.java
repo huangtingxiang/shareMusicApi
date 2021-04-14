@@ -3,6 +3,7 @@ package com.example.sharemusicplayer.localPlayer.fragment;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -21,12 +22,12 @@ import android.view.ViewGroup;
 import com.example.sharemusicplayer.R;
 import com.example.sharemusicplayer.Utils.MusicUtils;
 import com.example.sharemusicplayer.entity.Song;
-import com.example.sharemusicplayer.httpService.BaseHttpService;
 import com.example.sharemusicplayer.httpService.SongService;
 import com.example.sharemusicplayer.localPlayer.view.ActionMenuAdapter;
 import com.example.sharemusicplayer.localPlayer.view.LocalSongsAdapter;
 import com.example.sharemusicplayer.musicPlayer.activities.PlayerActivity;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ListHolder;
@@ -34,6 +35,8 @@ import com.orhanobut.dialogplus.OnItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class LocalPlayerFragment extends Fragment {
     private RecyclerView songsView; // 歌曲列表滑动条
@@ -87,13 +90,15 @@ public class LocalPlayerFragment extends Fragment {
 
         songsView.setAdapter(songsAdapter);
 
-        // TODO 从本地数据库中读取存储的歌曲信息
-        songService.recommendSongs(new BaseHttpService.CallBack() {
-            @Override
-            public void onSuccess(BaseHttpService.HttpTask.CustomerResponse result) {
-                songsAdapter.setSongs((Song[]) result.getData());
-            }
-        });
+        // 从本地数据库中读取存储的歌曲信息
+        SharedPreferences pre = this.getActivity().getSharedPreferences(getResources().getString(R.string.local_songs), MODE_PRIVATE);
+        final String songListJson = pre.getString(getResources().getString(R.string.local_songs_list), "");
+        Gson gson = new Gson();
+        Song[] songs = gson.fromJson(songListJson, Song[].class);
+        if (songs != null) {
+            songsAdapter.setSongs(songs);
+        }
+
 
         // 设置搜索菜单 TODO 监听各个选项的点击
         myToolbar = rootView.findViewById(R.id.my_toolbar2);
@@ -112,7 +117,16 @@ public class LocalPlayerFragment extends Fragment {
                                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_CODE);
                         }
                         break;
-
+                    case R.id.clear_local_music:
+                        // 清除保存歌曲列表
+                        SharedPreferences.Editor edit = LocalPlayerFragment.this.getActivity().getSharedPreferences(getResources().getString(R.string.local_songs), MODE_PRIVATE).edit();
+                        edit.putString(getResources().getString(R.string.local_songs_list), "");
+                        edit.apply();
+                        Song[] songsList = new Song[0];
+                        songsAdapter.setSongs(songsList);
+                        ((PlayerActivity) getActivity()).play();
+                        ((PlayerActivity) getActivity()).setPlayList(songsList, 0);
+                        break;
                     default:
                         break;
                 }
@@ -170,7 +184,12 @@ public class LocalPlayerFragment extends Fragment {
                     }
                     songsAdapter.addSongsToFirst(songList.toArray(new Song[songList.size()]));
 
-                    // TODO 将获取到的歌单列表保存到本地中
+                    // 将本地歌单保存到数据库中
+                    Gson gson = new Gson();
+                    String songListJson = gson.toJson(songsAdapter.getSongList());  // 将歌单列表化为json字符串
+                    SharedPreferences.Editor edit = LocalPlayerFragment.this.getActivity().getSharedPreferences(getResources().getString(R.string.local_songs), MODE_PRIVATE).edit();
+                    edit.putString(getResources().getString(R.string.local_songs_list), songListJson);
+                    edit.apply();
                 }
                 break;
         }
