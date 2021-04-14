@@ -45,7 +45,7 @@ public class LocalSongsAdapter extends RecyclerView.Adapter<LocalSongsAdapter.So
         this.actionClickListener = actionClickListener;
     }
 
-    public LocalSongsAdapter(Song[] songs, LocalSongsAdapter.SongClickListener listener, boolean showImage,LocalSongsAdapter.ActionClickListener actionClickListener) {
+    public LocalSongsAdapter(Song[] songs, LocalSongsAdapter.SongClickListener listener, boolean showImage, LocalSongsAdapter.ActionClickListener actionClickListener) {
         this.actionClickListener = actionClickListener;
         this.songList = songs;
         this.listener = listener;
@@ -60,6 +60,28 @@ public class LocalSongsAdapter extends RecyclerView.Adapter<LocalSongsAdapter.So
     public void setSongs(Song[] songs) {
         this.songList = songs;
         notifyDataSetChanged();
+    }
+
+    /**
+     * 将歌曲数组插入到当前播放列表头部
+     *
+     * @param songs
+     */
+    public void addSongsToFirst(Song[] songs) {
+        Song[] songList = new Song[songs.length + this.songList.length];
+        for (int i = 0; i < songList.length; i++) {
+            if (i < songs.length) {
+                songList[i] = songs[i];
+            } else {
+                songList[i] = this.songList[i - songs.length];
+            }
+        }
+        this.songList = songList;
+        notifyDataSetChanged();
+    }
+
+    public Song[] getSongList() {
+        return this.songList;
     }
 
 
