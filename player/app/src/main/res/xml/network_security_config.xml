@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">192.168.2.205</domain>
+        <domain includeSubdomains="true">192.168.2.206</domain>
         <domain includeSubdomains="true">tyst.migu.cn</domain>
         <domain includeSubdomains="true">music.126.net</domain>
         <domain includeSubdomains="true">47.93.210.229</domain>

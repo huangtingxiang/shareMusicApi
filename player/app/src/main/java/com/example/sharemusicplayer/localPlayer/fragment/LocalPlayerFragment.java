@@ -152,8 +152,6 @@ public class LocalPlayerFragment extends Fragment {
                         edit.apply();
                         songList = new Song[0];
                         songsAdapter.setSongs(songList);
-                        ((PlayerActivity) getActivity()).play();
-                        ((PlayerActivity) getActivity()).setPlayList(songList, 0);
                         break;
                     default:
                         break;
