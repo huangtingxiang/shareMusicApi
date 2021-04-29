@@ -225,6 +225,16 @@ public class PlayerService extends Service {
         return 0;
     }
 
+    /**
+     * 设置播放进度
+     * @param process   播放进度
+     */
+    public void setProcess(int process) {
+        if (mediaPlayer != null && (isPlaying() || isPause)) {
+            mediaPlayer.seekTo(process);
+        }
+    }
+
     public BehaviorSubject<Song> getNowPlayingSong() {
         return this.nowPlayingMusic;
     }
