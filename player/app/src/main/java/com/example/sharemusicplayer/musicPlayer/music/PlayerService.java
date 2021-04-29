@@ -231,7 +231,7 @@ public class PlayerService extends Service {
      */
     public void setProcess(int process) {
         if (mediaPlayer != null && (isPlaying() || isPause)) {
-            mediaPlayer.seekTo(process);
+            mediaPlayer.seekTo(process * 1000);
         }
     }
 
