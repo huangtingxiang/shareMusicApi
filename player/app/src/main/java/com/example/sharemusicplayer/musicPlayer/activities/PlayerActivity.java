@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -27,7 +28,6 @@ import com.example.sharemusicplayer.entity.Song;
 import com.example.sharemusicplayer.httpService.BaseHttpService;
 import com.example.sharemusicplayer.httpService.SongService;
 import com.example.sharemusicplayer.musicPlayer.music.PlayerService;
-import com.example.sharemusicplayer.musicPlayer.view.ProgressView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -58,7 +58,8 @@ public abstract class PlayerActivity extends AppCompatActivity {
     // 播放器组件
     private TextView mTimeView;
     private TextView mDurationView;
-    private ProgressView mProgressView;
+//    private ProgressView mProgressView;
+    private SeekBar mProgressView;
     private TextView songNameTextView;
     private TextView artistTextView;
     private FloatingActionButton mFabView;
@@ -165,8 +166,8 @@ public abstract class PlayerActivity extends AppCompatActivity {
             mDurationView.setText(DateUtils.formatElapsedTime(duration));
         }
         if (mProgressView != null) {
-            int percentage = (int) (position / (duration * 1.0) * 100);
-            mProgressView.setProgress(percentage);
+            mProgressView.setMax(duration);
+            mProgressView.setProgress(position);
         }
     }
 
@@ -194,7 +195,27 @@ public abstract class PlayerActivity extends AppCompatActivity {
 
         mTimeView = (TextView) mTimeAnimation;
         mDurationView = (TextView) mDurationAnimation;
-        mProgressView = (ProgressView) mProgressAnimation;
+        mProgressView = (SeekBar) mProgressAnimation;
+        if (mProgressView != null) {
+            // 监听拖动点击事件
+            mProgressView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    // change时改变进度文字
+                    mTimeView.setText(DateUtils.formatElapsedTime(progress));
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    // end之后调整播放进度
+                    mService.setProcess(seekBar.getProgress());
+                }
+            });
+        }
         mFabView = (FloatingActionButton) mFabAnimation;
         songNameTextView = findViewById(R.id.song_name);
         artistTextView = findViewById(R.id.artist);
