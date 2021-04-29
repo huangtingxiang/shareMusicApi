@@ -6,7 +6,9 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Transition;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.andremion.music.MusicCoverView;
@@ -17,9 +19,15 @@ import com.example.sharemusicplayer.httpService.BaseHttpService;
 import com.example.sharemusicplayer.httpService.DownloadImageTask;
 import com.example.sharemusicplayer.httpService.PlayListService;
 import com.example.sharemusicplayer.httpService.SongService;
+import com.example.sharemusicplayer.localPlayer.fragment.LocalPlayerFragment;
+import com.example.sharemusicplayer.localPlayer.view.ActionMenuAdapter;
 import com.example.sharemusicplayer.musicPlayer.view.TransitionAdapter;
+import com.example.sharemusicplayer.musicPlayer.view.VolumeAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.orhanobut.dialogplus.DialogPlus;
+import com.orhanobut.dialogplus.ListHolder;
+import com.orhanobut.dialogplus.OnItemClickListener;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.observers.DisposableObserver;
@@ -35,6 +43,7 @@ public class DetailActivity extends PlayerActivity {
     PlayList[] playLists;
     String[] playListName;
     Song nowPlayingSong;
+    ImageView volumeControl;
 
     PlayListService playListService = PlayListService.getInstance();
     SongService songService = SongService.getInstance();
@@ -51,6 +60,24 @@ public class DetailActivity extends PlayerActivity {
             @Override
             public void onTransitionEnd(Transition transition) {
                 mCoverView.start();
+            }
+        });
+
+        // 调节音量
+        volumeControl = findViewById(R.id.volume_control);
+        volumeControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogPlus dialog = DialogPlus.newDialog(DetailActivity.this)
+                        .setAdapter(new VolumeAdapter(DetailActivity.this))
+                        .setContentHolder(new ListHolder())
+                        .setCancelable(true)
+                        .setGravity(Gravity.BOTTOM)
+                        .setPadding(10, 10, 10, 10)
+                        .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
+                        .setExpanded(false, 150)  // This will enable the expand feature, (similar to android L share dialog)
+                        .create();
+                dialog.show();
             }
         });
 
