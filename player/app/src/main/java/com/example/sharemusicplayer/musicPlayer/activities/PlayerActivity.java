@@ -43,7 +43,7 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public abstract class PlayerActivity extends AppCompatActivity {
 
-    private SongService songService = SongService.getInstance();
+    protected SongService songService = SongService.getInstance();
 
     // 动画切换场景
     private View mTitleAnimation;
@@ -52,7 +52,7 @@ public abstract class PlayerActivity extends AppCompatActivity {
     private View mProgressAnimation;
     private View mFabAnimation;
 
-    private PlayerService mService;
+    protected PlayerService mService;
     private boolean mBound = false;
 
     // 播放器组件

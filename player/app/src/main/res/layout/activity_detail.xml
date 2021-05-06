@@ -6,24 +6,13 @@
     android:background="#616161"
     android:fitsSystemWindows="true">
 
-    <com.andremion.music.MusicCoverView
-        android:id="@+id/cover"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:scaleType="centerInside"
-        android:src="@drawable/album_cover_daft_punk"
-        android:transitionName="@string/transition_name_cover"
-        app:layout_heightPercent="35%"
-        app:shape="circle" />
-
     <LinearLayout
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:transitionName="@string/transition_name_title"
-        app:layout_marginTopPercent="10%">
+        app:layout_marginTopPercent="5%">
 
         <TextView
             android:id="@+id/song_name"
@@ -47,10 +36,77 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/lrc_action"
+        android:visibility="gone"
+        app:layout_heightPercent="8%"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:transitionGroup="true">
+
+        <ImageView
+            android:id="@+id/lrc_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:src="@drawable/ic_baseline_arrow_back_ios_24" />
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:src="@drawable/ic_baseline_insert_drive_file_24" />
+    </RelativeLayout>
+    <!--    歌词列表 默认不显示-->
+    <me.wcy.lrcview.LrcView
+        android:id="@+id/lrc_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        app:layout_heightPercent="55%"
+        app:lrcAnimationDuration="1000"
+        app:lrcCurrentTextColor="#3F51B5"
+        app:lrcDividerHeight="20dp"
+        app:lrcLabel="找不到歌词(@_@)"
+        app:lrcNormalTextColor="#BDBDBD"
+        app:lrcNormalTextSize="15sp"
+        app:lrcPadding="16dp"
+        app:lrcTextGravity="center"
+        app:lrcTextSize="15sp"
+        app:lrcTimeTextColor="#BDBDBD"
+        app:lrcTimelineColor="#80BDBDBD"
+        app:lrcTimelineTextColor="#9FA8DA" />
+
+    <com.andremion.music.MusicCoverView
+        android:id="@+id/cover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/album_cover_daft_punk"
+        android:transitionName="@string/transition_name_cover"
+        app:layout_heightPercent="55%"
+        app:shape="circle" />
+
     <LinearLayout
+        android:id="@+id/music_message"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/timers_anchor"
+        android:layout_above="@id/controls"
+        android:layout_below="@id/cover"
         android:layout_centerInParent="true"
         android:orientation="vertical">
 
@@ -58,19 +114,66 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <LinearLayout
+                android:id="@+id/ordering"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:transitionGroup="true">
+
+                <ImageView
+                    android:id="@+id/repeat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:src="@drawable/ic_repeat_white_24dp" />
+
+                <Space
+                    android:layout_width="@dimen/activity_horizontal_margin"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/add_to_play_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:src="@drawable/ic_add_circle_outline_white_24dp"
+                    android:visibility="gone" />
+
+                <Space
+                    android:layout_width="@dimen/activity_horizontal_margin"
+                    android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/volume_control"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:src="@drawable/ic_baseline_volume_down_24" />
+
+            </LinearLayout>
+
             <TextView
+                android:paddingBottom="15dp"
                 android:id="@+id/player_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:transitionName="@string/transition_name_time" />
 
             <SeekBar
+                android:paddingBottom="15dp"
                 android:id="@+id/player_progress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
                 android:layout_toLeftOf="@id/player_duration"
                 android:layout_toRightOf="@id/player_time"
@@ -78,10 +181,12 @@
                 android:transitionName="progress" />
 
             <TextView
+                android:paddingBottom="15dp"
                 android:id="@+id/player_duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
                 android:layout_centerInParent="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 android:transitionName="@string/transition_name_time" />
@@ -99,57 +204,6 @@
         android:transitionName="@string/transition_name_fab"
         app:backgroundTint="@color/colorAccent" />
 
-    <Space
-        android:id="@+id/timers_anchor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cover"
-        android:layout_centerHorizontal="true"
-        app:layout_widthPercent="25%" />
-
-
-    <LinearLayout
-        android:id="@+id/ordering"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/timers_anchor"
-        android:layout_centerHorizontal="true"
-        android:transitionGroup="true">
-
-        <ImageView
-            android:id="@+id/repeat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_repeat_white_24dp" />
-
-        <Space
-            android:layout_width="@dimen/activity_horizontal_margin"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:id="@+id/add_to_play_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_add_circle_outline_white_24dp"
-            android:visibility="gone" />
-
-        <Space
-            android:layout_width="@dimen/activity_horizontal_margin"
-            android:layout_height="wrap_content" />
-
-        <ImageView
-            android:id="@+id/volume_control"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:src="@drawable/ic_baseline_volume_down_24" />
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/controls"

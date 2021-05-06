@@ -80,6 +80,21 @@ async def recommend_songs(request):
         return web.json_response([obj.to_dict() for obj in netease_result])
 
 
+# 根据歌曲id或名字获取歌词
+@routes.get('/lyric')
+async def recommend_songs(request):
+    timeout = aiohttp.ClientTimeout(total=10)
+    name = request.rel_url.query.get('name', None)
+    id2 = request.rel_url.query.get('id', None)
+    async with aiohttp.ClientSession(timeout=timeout, cookie_jar=cookie_jar) as session:
+        neteaseMusicService.session = session
+        result = None
+        if id2 is not None:
+            result = await neteaseMusicService.get_lyric_by_id(id2)
+        elif name is not None:
+            result = await neteaseMusicService.get_lyric_by_name(name)
+    return web.Response(text=result)
+
 app = web.Application()
 app.add_routes(routes)
 web.run_app(app)
