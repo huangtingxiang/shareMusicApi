@@ -120,3 +120,19 @@ async def play_list_detail(id):
                      'neteaseMusic',
                      item['id'], item['al']['id']))
         return result
+
+# 根据歌曲id获取歌词
+async def get_lyric_by_id(id):
+    async with session.get(url + '/lyric', params={'id': str(id)}) as resp:
+        res = await resp.json()
+        if 'lrc' in res:
+            return res['lrc']['lyric']
+        return ''
+
+# 根据歌名获取歌词 先获取歌曲id 再获取歌词
+async def get_lyric_by_name(name):
+    songs_list = await search(name)
+    if songs_list[0] is not None:
+        res = await get_lyric_by_id(songs_list[0].song_id)
+        return res
+    return ''

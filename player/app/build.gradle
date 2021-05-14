@@ -47,6 +47,7 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     implementation 'com.orhanobut:dialogplus:1.11@aar'
+    implementation 'me.wcy:lrcview:2.2'
 
     compile 'com.leon:lfilepickerlibrary:1.8.0'
     testImplementation 'junit:junit:4.12'

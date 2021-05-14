@@ -5,11 +5,13 @@ import androidx.annotation.RequiresApi;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.transition.Transition;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.andremion.music.MusicCoverView;
 import com.example.sharemusicplayer.R;
@@ -19,18 +21,20 @@ import com.example.sharemusicplayer.httpService.BaseHttpService;
 import com.example.sharemusicplayer.httpService.DownloadImageTask;
 import com.example.sharemusicplayer.httpService.PlayListService;
 import com.example.sharemusicplayer.httpService.SongService;
-import com.example.sharemusicplayer.localPlayer.fragment.LocalPlayerFragment;
-import com.example.sharemusicplayer.localPlayer.view.ActionMenuAdapter;
 import com.example.sharemusicplayer.musicPlayer.view.TransitionAdapter;
 import com.example.sharemusicplayer.musicPlayer.view.VolumeAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ListHolder;
-import com.orhanobut.dialogplus.OnItemClickListener;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.observers.DisposableObserver;
+import me.wcy.lrcview.LrcView;
 
 /**
  * 歌曲详情
@@ -44,6 +48,16 @@ public class DetailActivity extends PlayerActivity {
     String[] playListName;
     Song nowPlayingSong;
     ImageView volumeControl;
+
+    /**
+     * 歌词显示所需要的控件
+     */
+    MusicCoverView coverView;
+    LrcView lrcView;
+    FloatingActionButton playerFab;
+    View musicMessage;
+    View lrcAction;
+    ImageView lrcBack;
 
     PlayListService playListService = PlayListService.getInstance();
     SongService songService = SongService.getInstance();
@@ -60,6 +74,29 @@ public class DetailActivity extends PlayerActivity {
             @Override
             public void onTransitionEnd(Transition transition) {
                 mCoverView.start();
+            }
+        });
+
+        // 获取标题 封面 歌词列表
+        coverView = findViewById(R.id.cover);
+        lrcView = findViewById(R.id.lrc_list);
+        playerFab = findViewById(R.id.player_fab);
+        musicMessage = findViewById(R.id.music_message);
+        lrcAction = findViewById(R.id.lrc_action);
+        lrcBack = lrcAction.findViewById(R.id.lrc_back);
+
+        // 点击封面时候显示歌词 隐藏封面信息
+        coverView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLyric();
+            }
+        });
+        // 点击返回时 隐藏歌词 显示封面信息
+        lrcBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hiddenLyric();
             }
         });
 
@@ -142,6 +179,7 @@ public class DetailActivity extends PlayerActivity {
 
     /**
      * 当服务绑定完成后 获取当前播放的音乐 更改图片
+     * 获取歌词
      */
     @Override
     public void onServiceFinish() {
@@ -149,6 +187,26 @@ public class DetailActivity extends PlayerActivity {
             @Override
             public void onNext(@NonNull Song song) {
                 nowPlayingSong = song;
+                // 根据歌曲id或歌曲名字获取歌词
+                if (song.getSong_id() != null) {
+                    songService.getLyricById(new BaseHttpService.CallBack() {
+                        @Override
+                        public void onSuccess(BaseHttpService.HttpTask.CustomerResponse result) {
+
+                            String mainLrcText = result.getBody();
+                            lrcView.loadLrc(mainLrcText, null);
+
+                        }
+                    }, song.getSong_id());
+                } else if (song.getName() != null) {
+                    songService.getLyricByName(new BaseHttpService.CallBack() {
+                        @Override
+                        public void onSuccess(BaseHttpService.HttpTask.CustomerResponse result) {
+                            String mainLrcText = result.getBody();
+                            lrcView.loadLrc(mainLrcText, null);
+                        }
+                    }, song.getName());
+                }
                 new DownloadImageTask(DetailActivity.this.mCoverView)
                         .execute(song.getPic_url());
             }
@@ -172,4 +230,60 @@ public class DetailActivity extends PlayerActivity {
             mCoverView.stop();
         }
     }
+
+    // 显示歌词
+    public void showLyric() {
+        lrcView.setVisibility(View.VISIBLE);
+        coverView.setVisibility(View.GONE);
+        playerFab.setVisibility(View.GONE);
+        lrcAction.setVisibility(View.VISIBLE);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.BELOW, R.id.lrc_list);
+        musicMessage.setLayoutParams(params);
+        handler.post(runnable);
+    }
+
+    // 隐藏歌词
+    public void hiddenLyric() {
+        lrcView.setVisibility(View.GONE);
+        coverView.setVisibility(View.VISIBLE);
+        playerFab.setVisibility(View.VISIBLE);
+        lrcAction.setVisibility(View.GONE);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.BELOW, R.id.cover);
+        musicMessage.setLayoutParams(params);
+        handler.removeCallbacks(runnable);
+    }
+
+    private String getLrcText(String fileName) {
+        String lrcText = null;
+        try {
+            InputStream is = getAssets().open(fileName);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            lrcText = new String(buffer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return lrcText;
+    }
+
+    /**
+     * 每300毫秒 更新进度
+     */
+    private Handler handler = new Handler();
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mService.isPlaying()) {
+                long time = mService.getMilliSecond();
+                lrcView.updateTime(time);
+            }
+            handler.postDelayed(this, 300);
+        }
+    };
 }

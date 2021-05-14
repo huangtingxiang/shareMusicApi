@@ -163,8 +163,9 @@ public class BaseHttpService {
                 // 在这里将返回流转化为需要的范型数据并返回
                 HttpTask.CustomerResponse customerResponse = new HttpTask.CustomerResponse();
                 customerResponse.response = response;
+                String body = response.body().string();
+                customerResponse.body = body;
                 if (assertSuccessResponse(response) && type != null) {
-                    String body = response.body().string();
                     customerResponse.data = gson.fromJson(body, type);
                 }
                 return customerResponse;
@@ -182,11 +183,14 @@ public class BaseHttpService {
 
         public class CustomerResponse {
             Response response;
+            String body;
             E data;
 
             public Response getResponse() {
                 return response;
             }
+
+            public String getBody() {return body;}
 
             public E getData() {
                 return data;

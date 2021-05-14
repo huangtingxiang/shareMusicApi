@@ -23,13 +23,14 @@ import io.reactivex.rxjava3.subjects.BehaviorSubject;
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class PlayerService extends Service {
     HashMap header = new HashMap(); // 请求头
-    private MediaPlayer mediaPlayer;    // 播放器
+    protected MediaPlayer mediaPlayer;    // 播放器
     int position = 1;   // 当前播放歌曲
     Song[] songList = {};   // 歌曲列表
     public boolean isPause = false;    // 是否暂停
     SongService songService = SongService.getInstance();
     BehaviorSubject<Song> nowPlayingMusic = BehaviorSubject.createDefault(new Song());  // 当前播放的音乐
     public BehaviorSubject<Boolean> playing = BehaviorSubject.createDefault(false);    // 是否在播放音乐
+    public BehaviorSubject<Integer> processing = BehaviorSubject.createDefault(0);         // 当前进度
     NullSongLink nullSongLink;
 
 
@@ -204,6 +205,17 @@ public class PlayerService extends Service {
     }
 
     /**
+     * 获取进度(毫秒)
+     * @return
+     */
+    public int getMilliSecond() {
+        if (mediaPlayer != null && (isPlaying() || isPause)) {
+            return mediaPlayer.getCurrentPosition();
+        }
+        return 0;
+    }
+
+    /**
      * 设置播放列表 同时位置归0
      *
      * @param songList
@@ -227,11 +239,13 @@ public class PlayerService extends Service {
 
     /**
      * 设置播放进度
-     * @param process   播放进度
+     *
+     * @param process 播放进度
      */
     public void setProcess(int process) {
         if (mediaPlayer != null && (isPlaying() || isPause)) {
             mediaPlayer.seekTo(process * 1000);
+            processing.onNext(process);
         }
     }
 

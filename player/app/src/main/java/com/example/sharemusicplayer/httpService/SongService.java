@@ -1,5 +1,7 @@
 package com.example.sharemusicplayer.httpService;
 
+import android.util.Pair;
+
 import com.example.sharemusicplayer.config.BaseConfig;
 import com.example.sharemusicplayer.entity.PlayList;
 import com.example.sharemusicplayer.entity.Song;
@@ -80,6 +82,7 @@ public class SongService {
 
     /**
      * 创建歌曲到歌单中 本地服务
+     *
      * @param callBack
      * @param playId
      * @param song
@@ -90,5 +93,25 @@ public class SongService {
 
     public void playListDetailForLocal(BaseHttpService.CallBack callBack, Long id) {
         httpService.get(BaseConfig.LOCAL_URL + "song/getByPlayList/" + id, callBack, Song[].class);
+    }
+
+    /**
+     * 根据id获取歌词
+     * @param callBack
+     * @param id
+     */
+    public void getLyricById(BaseHttpService.CallBack callBack, Long id) {
+        Pair<String, String> pair = new Pair<>("id", id.toString());
+        httpService.get(BaseConfig.SPIDER_URL + "lyric", callBack, null, pair);
+    }
+
+    /**
+     * 根据名字获取歌词
+     * @param callBack
+     * @param name
+     */
+    public void getLyricByName(BaseHttpService.CallBack callBack, String name) {
+        Pair<String, String> pair = new Pair<>("name", name);
+        httpService.get(BaseConfig.SPIDER_URL + "lyric", callBack, null, pair);
     }
 }
