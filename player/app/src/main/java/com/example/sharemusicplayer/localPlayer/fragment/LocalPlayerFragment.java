@@ -5,15 +5,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Environment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -33,6 +36,7 @@ import com.orhanobut.dialogplus.DialogPlus;
 import com.orhanobut.dialogplus.ListHolder;
 import com.orhanobut.dialogplus.OnItemClickListener;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +48,9 @@ public class LocalPlayerFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private LocalSongsAdapter songsAdapter; // 本地歌曲adapter
     private Toolbar myToolbar;  // 操作栏
+    ActionMenuAdapter.ActionMenu deleteAction;
+    ActionMenuAdapter.ActionMenu removeAction;
+    ActionMenuAdapter.ActionMenu openAction;
 
     private static final int OPEN_DIRECTORY = 1;
     private static final int WRITE_EXTERNAL_STORAGE_CODE = 2;
@@ -55,6 +62,28 @@ public class LocalPlayerFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.local_player_fragment, container, false);
+        // 设置操作栏动作
+        removeAction = new ActionMenuAdapter.ActionMenu();
+        removeAction.setDrawable(getContext().getDrawable(R.drawable.ic_baseline_remove_circle_outline_24));
+        removeAction.setText("从列表中删除");
+        removeAction.setL((view) -> {
+
+        });
+
+        deleteAction = new ActionMenuAdapter.ActionMenu();
+        deleteAction.setDrawable(getContext().getDrawable(R.drawable.ic_baseline_delete_24));
+        deleteAction.setText("删除本地文件");
+        deleteAction.setL((view) -> {
+            return;
+        });
+
+        openAction = new ActionMenuAdapter.ActionMenu();
+        openAction.setDrawable(getContext().getDrawable(R.drawable.ic_baseline_folder_open_24));
+        openAction.setText("打开本地文件");
+        openAction.setL((view) -> {
+            return;
+        });
+
 
         // 设置本地歌曲列表
         songsView = rootView.findViewById(R.id.local_songs);
@@ -69,11 +98,14 @@ public class LocalPlayerFragment extends Fragment {
             }
         }, false, new LocalSongsAdapter.ActionClickListener() {
             @Override
-            public void onClick(View view) {
-                // TODO 修改弹出框为对应操作
+            public void onClick(View view, Song song) {
                 // 点击action时显示dialog
+                List<ActionMenuAdapter.ActionMenu> actionMenus = new ArrayList<>();
+                actionMenus.add(removeAction);
+                actionMenus.add(openAction);
+                actionMenus.add(deleteAction);
                 DialogPlus dialog = DialogPlus.newDialog(LocalPlayerFragment.this.getActivity())
-                        .setAdapter(new ActionMenuAdapter())
+                        .setAdapter(new ActionMenuAdapter(actionMenus))
                         .setContentHolder(new ListHolder())
                         .setOnItemClickListener(new OnItemClickListener() {
                             @Override
@@ -83,8 +115,38 @@ public class LocalPlayerFragment extends Fragment {
                         .setCancelable(true)
                         .setGravity(Gravity.BOTTOM)
                         .setContentHeight(ViewGroup.LayoutParams.WRAP_CONTENT)
-                        .setExpanded(true)  // This will enable the expand feature, (similar to android L share dialog)
+                        .setExpanded(false)  // This will enable the expand feature, (similar to android L share dialog)
                         .create();
+
+                removeAction.setL((view1) -> {
+                    songsAdapter.removeSong(song);
+                    LocalPlayerFragment.this.songList = songsAdapter.getSongList();
+                    saveSongList();
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                });
+
+                openAction.setL((view1) -> {
+                    Uri selectedUri = Uri.parse(song.getSong_url());
+                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                    intent.setDataAndType(selectedUri, "resource/folder");
+                    startActivity(intent);
+
+                    startActivity(intent);
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                });
+
+                deleteAction.setL((view1) -> {
+                    songsAdapter.removeSong(song);
+                    LocalPlayerFragment.this.songList = songsAdapter.getSongList();
+                    saveSongList();
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                });
                 dialog.show();
             }
         });
@@ -210,14 +272,18 @@ public class LocalPlayerFragment extends Fragment {
                     }
                     songsAdapter.addSongsToFirst(songList.toArray(new Song[songList.size()]));
                     LocalPlayerFragment.this.songList = songsAdapter.getSongList();
-                    // 将本地歌单保存到数据库中
-                    Gson gson = new Gson();
-                    String songListJson = gson.toJson(LocalPlayerFragment.this.songList);  // 将歌单列表化为json字符串
-                    SharedPreferences.Editor edit = LocalPlayerFragment.this.getActivity().getSharedPreferences(getResources().getString(R.string.local_songs), MODE_PRIVATE).edit();
-                    edit.putString(getResources().getString(R.string.local_songs_list), songListJson);
-                    edit.apply();
+                    saveSongList();
                 }
                 break;
         }
+    }
+
+    private void saveSongList() {
+        // 将本地歌单保存到数据库中
+        Gson gson = new Gson();
+        String songListJson = gson.toJson(LocalPlayerFragment.this.songList);  // 将歌单列表化为json字符串
+        SharedPreferences.Editor edit = LocalPlayerFragment.this.getActivity().getSharedPreferences(getResources().getString(R.string.local_songs), MODE_PRIVATE).edit();
+        edit.putString(getResources().getString(R.string.local_songs_list), songListJson);
+        edit.apply();
     }
 }

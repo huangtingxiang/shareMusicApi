@@ -31,7 +31,7 @@ public class BaseHttpService {
 
     public static BaseHttpService baseHttpService;
 
-    public static String BASE_URL = "http://192.168.2.182:9000/";
+    public static String BASE_URL = "http://192.168.2.209:9000/";
 
 
     public static BaseHttpService getInstance() {
