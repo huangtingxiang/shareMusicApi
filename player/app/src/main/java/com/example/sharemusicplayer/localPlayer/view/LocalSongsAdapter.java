@@ -10,6 +10,9 @@ import com.example.sharemusicplayer.R;
 import com.example.sharemusicplayer.entity.Song;
 import com.example.sharemusicplayer.httpService.DownloadImageTask;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class LocalSongsAdapter extends RecyclerView.Adapter<LocalSongsAdapter.SongsViewHolder> {
     Song[] songList;    // 显示的歌曲列表
@@ -84,6 +87,18 @@ public class LocalSongsAdapter extends RecyclerView.Adapter<LocalSongsAdapter.So
         return this.songList;
     }
 
+    public void removeSong(Song song) {
+        int col = 0;
+        Song[] newSong = new Song[songList.length -1];
+       for(int i = 0; i < songList.length; i ++) {
+           if (songList[i] != song) {
+               newSong[col++] = songList[i];
+           }
+       }
+       songList = newSong;
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public LocalSongsAdapter.SongsViewHolder onCreateViewHolder(ViewGroup parent,
@@ -116,7 +131,7 @@ public class LocalSongsAdapter extends RecyclerView.Adapter<LocalSongsAdapter.So
         holder.actionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                actionClickListener.onClick(v);
+                actionClickListener.onClick(v, song);
             }
         });
         if (showImage) {
@@ -136,6 +151,6 @@ public class LocalSongsAdapter extends RecyclerView.Adapter<LocalSongsAdapter.So
         void onClick(Song song, int position);
     }
     public interface ActionClickListener {
-        void onClick(View view);
+        void onClick(View view, Song song);
     }
 }
